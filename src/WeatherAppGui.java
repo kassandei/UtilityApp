@@ -1,11 +1,16 @@
+import org.json.simple.JSONObject;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
 public class WeatherAppGui extends JFrame {
+    private JSONObject weatherData;
     public WeatherAppGui() {
         // setup our gui and add a title
         super("Weather App");
@@ -42,12 +47,6 @@ public class WeatherAppGui extends JFrame {
         searchTextField.setFont(new Font("Dialog", Font.PLAIN, 24));
 
         add(searchTextField);
-
-        // search button
-        JButton searchButton = new JButton(loadImage("src/assets/search.png"));
-        searchButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        searchButton.setBounds(375, 15, 47, 44);
-        add(searchButton);
 
         // temperature text
         JLabel temperatureText = new JLabel("10C");
@@ -92,6 +91,66 @@ public class WeatherAppGui extends JFrame {
         windspeedText.setFont(new Font("Dialog",Font.PLAIN,16));
         add(windspeedText);
 
+        // search button
+        JButton searchButton = new JButton(loadImage("src/assets/search.png"));
+
+        // change the cursor to a hand cursor when hovering over this button
+        searchButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        searchButton.setBounds(375, 15, 47, 44);
+        searchButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // get location from user
+                String userInput = searchTextField.getText();
+
+                // validate input - remove whitespace to ensure non-empty text
+                if(userInput.replaceAll("\\s", "").length() <= 0) {
+                    return;
+                }
+
+                // retrieve weather data
+                weatherData = WeatherApp.getWeatherData(userInput);
+
+                // update gui
+
+                // update weather image
+                String weatherCondition = (String) weatherData.get("weather_condition");
+
+                // depending on the condition, we will update the weather image that
+                // corresponds with the condition
+                switch (weatherCondition) {
+                    case "Case":
+                        weatherConditionImage.setIcon(loadImage("src/assets/clear.png"));
+                        break;
+                    case "Clody":
+                        weatherConditionImage.setIcon(loadImage("src/assets/cloudy.png"));
+                        break;
+                    case "Rain":
+                        weatherConditionImage.setIcon(loadImage("src/assets/rain.png"));
+                        break;
+                    case "Snow":
+                        weatherConditionImage.setIcon(loadImage("src/assets/snow.png"));
+                        break;
+                }
+
+                // update temperature text
+                double temperature = (double) weatherData.get("temperature");
+                temperatureText.setText(temperature + " C");
+
+                // update weather condition text
+                weatherConditionDesc.setText(weatherCondition);
+
+                // update humidity text
+                long humidity = (long) weatherData.get("humidity");
+                humidityText.setText("<html><b>Humidity</b> " + humidity + "%</html>");
+
+                // update windspeed text
+                double windspeed = (double) weatherData.get("windspeed");
+                windspeedText.setText("<html><b>Windspeed</b> " + windspeed + "km/h<html>");
+
+            }
+        });
+        add(searchButton);
     }
 
     // used to create images in our gui components
@@ -105,7 +164,6 @@ public class WeatherAppGui extends JFrame {
         }catch(IOException e){
             e.printStackTrace();
         }
-
         System.out.println("Could not find resource");
         return null;
     }
