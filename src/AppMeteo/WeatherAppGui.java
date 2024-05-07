@@ -1,3 +1,5 @@
+package AppMeteo;
+
 import org.json.simple.JSONObject;
 
 import javax.imageio.ImageIO;
