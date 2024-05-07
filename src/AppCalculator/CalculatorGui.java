@@ -38,7 +38,7 @@ public class CalculatorGui extends JFrame implements ActionListener {
         setLocationRelativeTo(null);
         setResizable(false);
         setLayout(new BorderLayout());
-        Image icon = Toolkit.getDefaultToolkit().getImage("src/assets/icon.png");
+        Image icon = Toolkit.getDefaultToolkit().getImage("src/assets/icon2.png");
         setIconImage(icon);
         addGuiComponents(); // Add GUI components
     }
