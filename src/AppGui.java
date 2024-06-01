@@ -11,6 +11,7 @@ public class AppGui extends JFrame {
         setTitle("Utility App");
         setSize(400, 150); // Increased size for the buttons
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setResizable(false);
 
         // Set background color to black
         getContentPane().setBackground(Color.BLACK);
